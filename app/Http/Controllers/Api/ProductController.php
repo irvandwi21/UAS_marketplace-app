@@ -17,23 +17,43 @@ class ProductController extends Controller
     }
 
     // STORE
-    public function store(Request $request)
-    {
-        $request->validate([
-            'category_id' => 'required',
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'stock' => 'required'
-        ]);
+       public function store(Request $request)
+{
+    $request->validate([
+        'category_id' => 'required',
+        'name' => 'required',
+        'description' => 'required',
+        'price' => 'required',
+        'stock' => 'required',
+        'image' => 'nullable|image'
+    ]);
 
-        $product = Product::create($request->all());
+    $imageName = null;
 
-        return response()->json([
-            'message' => 'Produk berhasil ditambahkan',
-            'data' => $product
-        ]);
+    if ($request->hasFile('image')) {
+
+        $imageName = time().'.'.$request->image->extension();
+
+        $request->image->move(
+            public_path('products'),
+            $imageName
+        );
     }
+
+    $product = Product::create([
+        'category_id' => $request->category_id,
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'stock' => $request->stock,
+        'image' => $imageName
+    ]);
+
+    return response()->json([
+        'message' => 'Produk berhasil ditambahkan',
+        'data' => $product
+    ]);
+}
 
     // SHOW
     public function show($id)
