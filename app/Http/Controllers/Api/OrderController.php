@@ -10,28 +10,41 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     public function store(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required',
-            'quantity' => 'required'
-        ]);
+{
+    $request->validate([
+        'customer_name' => 'required',
+        'phone' => 'required',
+        'address' => 'required',
+        'product_name' => 'required',
+        'qty' => 'required',
+        'total_price' => 'required'
+    ]);
 
-        $product = Product::findOrFail(
-            $request->product_id
-        );
+    $order = Order::create([
+        'order_code' => 'ORD' . time(),
 
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'quantity' => $request->quantity,
-            'total_price' =>
-                $product->price * $request->quantity,
-            'status' => 'pending'
-        ]);
+        'customer_name' => $request->customer_name,
 
-        return response()->json([
-            'message' => 'Order berhasil dibuat',
-            'data' => $order
-        ]);
-    }
+        'phone' => $request->phone,
+
+        'address' => $request->address,
+
+        'product_name' => $request->product_name,
+
+        'qty' => $request->qty,
+
+        'total_price' => $request->total_price,
+
+        'payment_status' => 'Pending',
+
+        'shipping_status' => 'Menunggu',
+
+        'tracking_number' => '-'
+    ]);
+
+    return response()->json([
+        'message' => 'Pesanan berhasil dibuat',
+        'data' => $order
+    ]);
+   }
 }
