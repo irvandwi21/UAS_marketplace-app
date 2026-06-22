@@ -64,25 +64,62 @@ class ProductController extends Controller
     }
 
     // UPDATE
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+        public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        $product->update($request->all());
+    $imageName = $product->image;
 
-        return response()->json([
-            'message' => 'Produk berhasil diupdate',
-            'data' => $product
-        ]);
+    if ($request->hasFile('image')) {
+
+        if (
+            $product->image &&
+            file_exists(public_path('products/' . $product->image))
+        ) {
+            unlink(public_path('products/' . $product->image));
+        }
+
+        $imageName = time() . '.' .
+            $request->image->extension();
+
+        $request->image->move(
+            public_path('products'),
+            $imageName
+        );
     }
 
+    $product->update([
+        'category_id' => $request->category_id,
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'stock' => $request->stock,
+        'image' => $imageName
+    ]);
+
+    return response()->json([
+        'message' => 'Produk berhasil diupdate',
+        'data' => $product
+    ]);
+}
     // DELETE
     public function destroy($id)
-    {
-        Product::findOrFail($id)->delete();
+{
+    $product = Product::findOrFail($id);
 
-        return response()->json([
-            'message' => 'Produk berhasil dihapus'
-        ]);
+    if (
+        $product->image &&
+        file_exists(public_path('products/' . $product->image))
+    ) {
+        unlink(
+            public_path('products/' . $product->image)
+        );
     }
+
+    $product->delete();
+
+    return response()->json([
+        'message' => 'Produk berhasil dihapus'
+    ]);
+}
 }

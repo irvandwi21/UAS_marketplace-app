@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class MobileAuthController extends Controller
 {
-    // REGISTER
+    // REGISTER USER MOBILE
     public function register(Request $request)
     {
         $request->validate([
@@ -30,7 +30,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // LOGIN
+    // LOGIN USER MOBILE
     public function login(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -41,21 +41,20 @@ class AuthController extends Controller
             ], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('mobile_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login berhasil',
-            'token' => $token
+            'token' => $token,
+            'user' => $user
         ]);
     }
 
-    // PROFILE
     public function profile(Request $request)
     {
         return response()->json($request->user());
     }
 
-    // LOGOUT
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();

@@ -1,0 +1,19 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\Setting;
+
+class SettingSeeder extends Seeder
+{
+    public function run(): void
+    {
+        Setting::create([
+            'store_name' => 'PC Marketplace',
+            'email' => 'admin@gmail.com',
+            'phone' => '08123456789',
+            'address' => 'Purwokerto'
+        ]);
+    }
+}
